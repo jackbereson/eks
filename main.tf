@@ -1,41 +1,19 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-# The following configuration uses a provider which provisions [fake] resources
-# to a fictitious cloud vendor called "Fake Web Services". Configuration for
-# the fakewebservices provider can be found in provider.tf.
-#
-# After running the setup script (./scripts/setup.sh), feel free to change these
-# resources and 'terraform apply' as much as you'd like! These resources are
-# purely for demonstration and created in Terraform Cloud, scoped to your TFC
-# user account.
-#
-# To review the provider and documentation for the available resources and
-# schemas, see: https://registry.terraform.io/providers/hashicorp/fakewebservices
-#
-# If you're looking for the configuration for the remote backend, you can find that
-# in backend.tf.
-
-
-resource "fakewebservices_vpc" "primary_vpc" {
-  name       = "Primary VPC"
-  cidr_block = "0.0.0.0/1"
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+}
+provider "aws" {
+  region = var.region
+}
+data "aws_availability_zones" "available" {}
+locals {
+  cluster_name = "architect-eks-${random_string.suffix.result}"
+}
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
 }
 
-resource "fakewebservices_server" "servers" {
-  count = 2
+//https://www.architect.io/blog/2023-01-19/kubernetes-cluster-in-aws/
 
-  name = "Server ${count.index + 1}"
-  type = "t2.micro"
-  vpc  = fakewebservices_vpc.primary_vpc.name
-}
-
-resource "fakewebservices_load_balancer" "primary_lb" {
-  name    = "Primary Load Balancer"
-  servers = fakewebservices_server.servers[*].name
-}
-
-resource "fakewebservices_database" "prod_db" {
-  name = "Production DB"
-  size = 256
-}
+//9rm49p7Kx2iVyQ.atlasv1.FfBIbnOvvQRCd0MdcAjIRALkJCrsq9Vy6XjbUiVLEKO5nr34yAByFiRRIarEkLuND14

@@ -188,20 +188,20 @@ cat $BACKEND_TF |
 mv $TEMP $BACKEND_TF
 
 # add extra provider config for the hostname if necessary
-if [[ "$HOST" != "app.terraform.io" ]]; then
-  TEMP=$(mktemp)
-  cat $PROVIDER_TF |
-  # Note: sed 15a\\ means append the strings that follows the \\ at line 15 in provider.tf
-    sed "15a\\
-  \  hostname = var.provider_hostname
-      " \
-      > $TEMP
-  echo "
-variable \"provider_hostname\" {
-  type = string
-}" >> $TEMP
-  mv $TEMP $PROVIDER_TF
-fi
+# if [[ "$HOST" != "app.terraform.io" ]]; then
+#   TEMP=$(mktemp)
+#   cat $PROVIDER_TF |
+#   # Note: sed 15a\\ means append the strings that follows the \\ at line 15 in provider.tf
+#     sed "15a\\
+#   \  hostname = var.provider_hostname
+#       " \
+#       > $TEMP
+#   echo "
+# variable \"provider_hostname\" {
+#   type = string
+# }" >> $TEMP
+#   mv $TEMP $PROVIDER_TF
+# fi
 
 echo
 divider
